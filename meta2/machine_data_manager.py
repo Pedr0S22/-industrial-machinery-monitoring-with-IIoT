@@ -30,6 +30,7 @@ class MachineDataManager:
     def _on_mqtt_message(self, client, userdata, msg):
         try:
             payload = json.loads(msg.payload.decode())
+            print(f"Received data from DataManagerAgent:\n{payload}")
             self._process_machine_data(payload)
         except Exception as e:
             print(f"Error processing message: {e}")
@@ -58,7 +59,7 @@ class MachineDataManager:
         
         # Apply parameter-specific bounds
         bounds = {
-            "rpm": (-200, 200),
+            "rpm": (-128, 127),
             "coolant_temp": (-10, 10),
             "oil_pressure": (-2, 2),
             "battery_potential": (-1, 1),
@@ -88,13 +89,14 @@ class MachineDataManager:
 if __name__ == "__main__":
 
     # ===== MACHINE CONFIGURATION =====
-    intervals_path = "meta2/config/intervals.json"
+    intervals_path = "config/intervals.json"
 
     try:
         with open(intervals_path, "r", encoding="utf-8") as f:
             INTERVALS =  json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
             print("File not found/invalid")
+            INTERVALS = {}
             sys.exit(1)
 
     # ===== MQTT CONFIG =====

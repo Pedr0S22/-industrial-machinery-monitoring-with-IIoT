@@ -2,6 +2,6 @@
   "rpm": {"low": 800, "high": 2200, "ideal": 1100},
   "coolant_temp": {"low": 75, "high": 100, "ideal": 90},
   "oil_pressure": {"low": 1.5, "high": 7, "ideal": 3},
-  "battery": {"low": 12.6, "high": 13.6, "ideal": 13},
+  "battery_potential": {"low": 12.6, "high": 13.6, "ideal": 13},
   "consumption": {"low": 1, "high": 40, "ideal": 25}
 }

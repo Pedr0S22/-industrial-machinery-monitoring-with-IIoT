@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 
 class Machine:
+
     def __init__(self, machine_code, update_time):
         self.machine_code = machine_code
         self.update_time = update_time
@@ -21,7 +22,7 @@ class Machine:
         
         self.is_operational = True
         self.is_shutting_down = False
-        self.waiting_for_adjustment = True
+        self.waiting_for_adjustment = False
 
         self.rssi = -85
         self.snr = -15.0
@@ -33,10 +34,11 @@ class Machine:
     def update_sensors(self):
         """Update sensor values according to project specifications"""
         if self.is_shutting_down:
+            print("Restarting Machine...")
             # Gradually reduce all values to 0 for shutdown sequence
             self.rpm = 0
-            self.coolant_temp *= 0.4
-            self.oil_pressure = max(0, self.consumption - (2.0 if self.specs["oil_unit"] == "bar" else 29.0))
+            self.coolant_temp = max(0.0, self.coolant_temp * 0.4)
+            self.oil_pressure = max(0, self.oil_pressure  - (2.0 if self.specs["oil_unit"] == "bar" else 29.0))
             self.consumption = 0
             self.battery_potential = 0
             
@@ -45,6 +47,7 @@ class Machine:
                 if ((self.specs["temp_unit"] == "°C" and self.coolant_temp < 20) or 
                     (self.specs["temp_unit"] == "°F" and self.coolant_temp < 68)):
                     self._restart_machine()
+                    self.waiting_for_adjustment = False
             return
 
         # Normal operation updates
@@ -159,7 +162,6 @@ class Machine:
     def process_alert_command(self, command):
         """Process incoming MQTT alert commands"""
         # Example command: "0x02 0x01 0x01" (critical alert - shutdown)
-        self.waiting_for_adjustment = True
         parts = command.split()
         if len(parts) != 3:
             print("[ERROR] process_alert_command ")
@@ -168,6 +170,7 @@ class Machine:
         if parts[0] == "0x02" and parts[1] == "0x01":
             print(f"[{datetime.now()}] CRITICAL ALERT: Shutting down machine!")
             self.is_shutting_down = True
+            self.waiting_for_adjustment = True
 
     def generate_payload(self):
         """Generate TTN-compatible JSON payload"""
@@ -179,24 +182,24 @@ class Machine:
                 "join_eui": "0000000000000000",
                 "dev_addr": "".join(random.choices("0123456789ABCDEF", k=8))
             },
-            "received_at": datetime.utcnow().isoformat() + "Z",
+            "received_at": datetime.now().isoformat(),
             "uplink_message": {
                 "f_port": 1,
                 "f_cnt": 1234,
                 "frm_payload": "BASE64_SIMULATED_PAYLOAD",
                 "decoded_payload": {
-                    "rpm": self.rpm,
-                    "coolant_temperature": self.coolant_temp,
-                    "oil_pressure": self.oil_pressure,
-                    "battery_potential": self.battery_potential,
-                    "consumption": self.consumption,
+                    "rpm": round(self.rpm,2),
+                    "coolant_temperature": round(self.coolant_temp,2),
+                    "oil_pressure": round(self.oil_pressure,2),
+                    "battery_potential": round(self.battery_potential,2),
+                    "consumption": round(self.consumption,2),
                     "machine_type": self.machine_code
                 },
                 "rx_metadata": [{
                     "gateway_id": "dei-gateway-1",
-                    "rssi": self.rssi,
-                    "snr": self.snr,
-                    "channel_rssi": self.rssi_channel,
+                    "rssi": round(self.rssi,2),
+                    "snr": round(self.snr,2),
+                    "channel_rssi": round(self.rssi_channel,2),
                     "uplink_token": "SIMULATED_TOKEN"
                 }],
                 "settings": {
@@ -247,20 +250,21 @@ if __name__ == "__main__":
     update_time = int(sys.argv[2])
     machine_code = sys.argv[3]
 
+    # ===== MQTT CONFIG =====
+    MQTT_BROKER_IP = "10.6.1.9"
+    MQTT_PORT = 1883
+
     # ===== MACHINE CONFIGURATION =====
-    machine_path = "meta2/config/all_machines.json"
+    machine_path = "config/all_machines.json"
 
     try:
         with open(machine_path, "r", encoding="utf-8") as f:
             MACHINE_SPECS =  json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
             print("File not found/invalid")
+            MACHINE_SPECS = {}
 
-    # ===== MQTT CONFIG =====
-    MQTT_BROKER_IP = "10.6.1.9"
-    MQTT_PORT = 1883
-
-    if machine_code not in MACHINE_SPECS:
+    if machine_code not in MACHINE_SPECS.keys():
         print(f"Invalid machine code. Choose from: {list(MACHINE_SPECS.keys())}")
         sys.exit(1)
 
@@ -280,16 +284,13 @@ if __name__ == "__main__":
         print(f"[{datetime.now()}] Started {machine_code} ({machine_id}) simulator (Update every {update_time}s)")
         while True:
             if machine.is_operational:
-                if not machine.waiting_for_adjustment:
-                    machine.update_sensors()
+                machine.update_sensors()
                 payload = machine.generate_payload()
-                
+                    
                 # Publish to MQTT
                 topic = f"v3/{group_id}@ttn/devices/{machine_id}/up"
                 client.publish(topic, json.dumps(payload))
                 print(f"[{datetime.now()}] Published update to {topic}")
-
-                machine.waiting_for_adjustment = False
                 
             time.sleep(update_time)
 
