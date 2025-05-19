@@ -1,0 +1,33 @@
+# Accessing Raspberry Pi
+
+ping 10.6.1.9
+ssh user@10.6.1.9
+pwd (check directory)
+mkdir <your_directory>
+cd <your_directory>
+
+# Python Virtual Environments
+
+python -m venv <your_venv>
+source defense/bin/activate
+
+# GPIO Zero library (inside environment)
+
+pip install --upgrade pip
+pip list
+pip install gpiozero pigpio
+pip install paho-mqtt
+pip install time
+
+pip freeze > requirements.txt
+cat requirements.txt
+
+# Send file to Raspberry
+
+"C:\Program Files\PuTTY\pscp.exe" "C:\Users\pedro\Desktop\Documentos_uni\Cadeiras_Uni\2ºA_2º_Semestre\SRSA\project\meta1\alarm\alarm_console.py" user@10.6.1.67:/home/user/defense_group19
+
+# Connections:
+
+https://projects.raspberrypi.org/en/projects/rpi-connect-buzzer
+https://projects.raspberrypi.org/en/projects/rpi-connect-led
+

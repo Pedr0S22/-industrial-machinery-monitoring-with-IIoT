@@ -1,0 +1,10 @@
+{
+    "A23X": {"machine_id": "M1","oil_unit": "psi", "temp_unit": "°C", "batt_unit": "V", "consumption_unit": "l/h"},
+    "B47Y": {"machine_id": "M2","oil_unit": "bar", "temp_unit": "°C", "batt_unit": "V", "consumption_unit": "gal/h"},
+    "C89Z": {"machine_id": "M3","oil_unit": "psi", "temp_unit": "°C", "batt_unit": "V", "consumption_unit": "gal/h"},
+    "D56W": {"machine_id": "M4","oil_unit": "bar", "temp_unit": "°C", "batt_unit": "V", "consumption_unit": "l/h"},
+    "E34V": {"machine_id": "M5","oil_unit": "psi", "temp_unit": "°F", "batt_unit": "V", "consumption_unit": "gal/h"},
+    "F78T": {"machine_id": "M6","oil_unit": "bar", "temp_unit": "°F", "batt_unit": "V", "consumption_unit": "l/h"},
+    "G92Q": {"machine_id": "M7","oil_unit": "psi", "temp_unit": "°F", "batt_unit": "V", "consumption_unit": "l/h"},
+    "H65P": {"machine_id": "M8","oil_unit": "bar", "temp_unit": "°F", "batt_unit": "mV", "consumption_unit": "gal/h"}
+}
