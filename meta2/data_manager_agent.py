@@ -342,7 +342,7 @@ if __name__ == "__main__":
 
     # ===== INFLUXDB CONFIG =====
     URL="https://eu-central-1-1.aws.cloud2.influxdata.com/"
-    TOKEN="oJE-YkyhUl4GqsVuysuIQFApneCVJsNkQYNFDLuequfCw_i5_c_J5iFGTNKGVPgZSMCTDq7lM5ph7o-EjeO0tQ=="
+    TOKEN="############"
     ORG="Coimbra lecd test"
     BUCKET="Project part2"
 
