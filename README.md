@@ -7,6 +7,7 @@ This project simulates an Industrial Internet of Things (IIoT) scenario where in
 You must have python installed, as well as the following packages:
 
 - **Json, Sys:** Utilized for reading and creating Json objects.
+- **RPi.GPIO, Gpiozero:** Used for communications with Rasperry Pi Zero and sensors. 
 - **Time, Datetime, Collections, Random:** Used for data manipulation. 
 - **Pprint:** Used for printing the messages between system on Debugger system.
 - **Threading:** Utilized on Alert Manager to deal with control messages from Machine Data Manager.
