@@ -14,9 +14,23 @@ You must have python installed, as well as the following packages:
 - **Socket, paho-mqtt:** Used for sending data between systems.
 - **Influxdb_client_3:** Utilized for sending the data to an InfluxDB database for further analysis on Grafana.
 
-Start running file *machine.py*, then *data_manager_agent.py*, *machine_data_manager.py*, *alert_machine.py* and finally *debugger.py*.
+To run this project you will need to generate your API key (token) on [InfluxDB](https://www.influxdata.com/) and place it on:
 
-**Note** that you need to change the BROKER IP/PORT, UDP IP/PORT, InfluxDB configs and GROUP_ID (optional) in all files, 
+```bash
+data_manager_agent.py
+```
+
+After all configuration being setted up, run by order:
+
+```bash
+machine.py
+data_manager_agent.py
+machine_data_manager.py
+alert_machine.py
+debugger.py
+```
+
+**Note** that you need to change the BROKER IP/PORT, UDP IP/PORT, InfluxDB configs and GROUP_ID (optional) in all files.
 
 ## Further Information
 
